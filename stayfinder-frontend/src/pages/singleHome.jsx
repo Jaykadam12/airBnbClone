@@ -15,7 +15,7 @@ function SingleHome() {
     const {user} = useAuth()
 
   async function fetchListings() {
-    const res = await fetch(`/api/listings/${id}`);
+    const res = await fetch(`https://airbnbclone-y56h.onrender.com/api/listings/${id}`);
     const data = await res.json();
     setHome(data);
   }
@@ -73,7 +73,7 @@ function SingleHome() {
           totalPrice: totalPrice
         }
 
-        const res = await fetch("/api/bookings", {
+        const res = await fetch("https://airbnbclone-y56h.onrender.com/api/bookings", {
           method: "POST",
           headers: {
             "Content-Type": "application/json", // ← important
