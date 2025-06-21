@@ -9,7 +9,7 @@ export const AuthProvider = ({ children }) => {
 
   async function fetchUser() {
     try {
-     const res = await fetch("http://localhost:5000/api/auth/me", {
+     const res = await fetch("https://airbnbclone-y56h.onrender.com/api/auth/me", {
        method: "GET",
        credentials: "include",
      });
@@ -36,10 +36,10 @@ export const AuthProvider = ({ children }) => {
   }
 
     async function fetchListings() {
-      let api = "/api/listings";
+      let api = "https://airbnbclone-y56h.onrender.com/api/listings";
 
       if (location.pathname === "/host"){
-        api = `/api/listings/host/${user._id}`;
+        api = `https://airbnbclone-y56h.onrender.com/api/listings/host/${user._id}`;
       }
 
       try {
