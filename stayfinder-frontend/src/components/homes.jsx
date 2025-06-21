@@ -19,7 +19,7 @@ function Homes() {
 
 async function handleDelete(homeId) {
   try {
-    const res = await fetch(`/api/listings/${homeId}`, {
+    const res = await fetch(`https://airbnbclone-y56h.onrender.com/api/listings/${homeId}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json"
