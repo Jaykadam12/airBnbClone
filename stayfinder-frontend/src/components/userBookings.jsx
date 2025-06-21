@@ -9,7 +9,7 @@ function UserBookings({ user }) {
   useEffect(() => {
     const fetchBookings = async () => {
       try {
-        const res = await fetch(`/api/bookings/${user._id}`);
+        const res = await fetch(`https://airbnbclone-y56h.onrender.com/api/bookings/${user._id}`);
         const data = await res.json();
         setBookings(data);
 
@@ -17,7 +17,7 @@ function UserBookings({ user }) {
 
         const listingResponses = await Promise.all(
           uniqueListingIds.map((id) =>
-            fetch(`/api/listings/${id}`).then((res) => res.json())
+            fetch(`https://airbnbclone-y56h.onrender.com/api/listings/${id}`).then((res) => res.json())
           )
         );
 
