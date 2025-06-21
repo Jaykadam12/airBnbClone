@@ -19,13 +19,17 @@ function Login() {
     console.log(data);
 
     try {
-      const res = await fetch("https://airbnbclone-y56h.onrender.com/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+    const res = await fetch(
+       "https://airbnbclone-y56h.onrender.com/api/auth/login",
+       {
+         method: "POST",
+         headers: {
+           "Content-Type": "application/json",
+         },
+         body: JSON.stringify(data),
+         credentials: "include", // 🔥 This is the key to enable cookies
+       }
+     );
 
       if (!res.ok) {
         const errorData = await res.json();
