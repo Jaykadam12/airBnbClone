@@ -48,12 +48,12 @@ router.post("/login", async (req, res) => {
     });
 
     // Set token in cookie
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: true, // Use true in production
-      sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000, 
-    });
+res.cookie("token", token, {
+  httpOnly: true,
+  secure: true, // Important for HTTPS
+  sameSite: "none", // Needed for cross-site cookies
+  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+});
 
     res.json({ message: "Login successful" });
   } catch (err) {
