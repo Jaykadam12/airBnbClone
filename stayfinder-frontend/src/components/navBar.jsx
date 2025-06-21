@@ -41,7 +41,7 @@ function NavBar() {
 
   async function handleLogout() {
     try {
-      const res = await fetch("/api/auth/logout", {
+      const res = await fetch("https://airbnbclone-y56h.onrender.com/api/auth/logout", {
         method: "POST",
       });
 
