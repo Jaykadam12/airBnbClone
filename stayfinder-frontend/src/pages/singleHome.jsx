@@ -107,7 +107,7 @@ function SingleHome() {
               <img
                 key={index}
                 className="rounded-lg h-52 w-92 object-cover shadow-md cursor-pointer transform transition duration-300 ease-in-out hover:scale-105 hover:shadow-xl"
-                src={`http://localhost:5000${image}`}
+                src={`https://airbnbclone-y56h.onrender.com${image}`}
                 alt={`Home image ${index + 1}`}
                 loading="lazy"
               />
