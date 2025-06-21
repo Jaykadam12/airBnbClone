@@ -8,9 +8,22 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser()); 
 app.use(
+const allowedOrigins = [
+  "http://localhost:5173", // local frontend
+  "https://airbnbclone-y56h.onrender.com", // replace with your real deployed frontend domain
+];
+
+app.use(
   cors({
-    origin: "http://localhost:5173", // your frontend origin
-    credentials: true, // allow cookies
+    origin: function (origin, callback) {
+      // allow requests with no origin (like mobile apps, Postman)
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("CORS not allowed for this origin"));
+      }
+    },
+    credentials: true, // allow cookies, tokens in headers
   })
 );
 
