@@ -6,7 +6,7 @@ function HostBookings() {
   useEffect(() => {
     const fetchHostBookings = async () => {
       try {
-        const res = await fetch("/api/bookings/host/bookings");
+        const res = await fetch("https://airbnbclone-y56h.onrender.com/api/bookings/host/bookings");
         const data = await res.json();
         setBookings(data);
       } catch (err) {
