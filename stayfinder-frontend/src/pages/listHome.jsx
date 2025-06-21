@@ -14,7 +14,7 @@ function ListHome() {
   const homeId = queryParams.get("homeId");
 
   async function fetchListings() {
-    const res = await fetch(`/api/listings/${homeId}`);
+    const res = await fetch(`https://airbnbclone-y56h.onrender.com/api/listings/${homeId}`);
     const data = await res.json();
     setHome(data);
   }
@@ -41,7 +41,7 @@ function ListHome() {
     });
     try {
       const method = editing ? "PUT" : "POST";
-      const url = editing ? `/api/listings/${homeId}` : "/api/listings";
+      const url = editing ? `https://airbnbclone-y56h.onrender.com/api/listings/${homeId}` : "https://airbnbclone-y56h.onrender.com/api/listings";
 
       const response = await fetch(url, {
         method,
