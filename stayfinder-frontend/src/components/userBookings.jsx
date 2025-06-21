@@ -61,7 +61,7 @@ function UserBookings({ user }) {
                 <img
                   src={
                     listing?.images?.[0]
-                      ? `http://localhost:5000${listing.images[0]}`
+                      ? `https://airbnbclone-y56h.onrender.com${listing.images[0]}`
                       : "/placeholder.jpg"
                   }
                   alt={listing?.title || "Listing"}
