@@ -24,6 +24,7 @@ async function handleDelete(homeId) {
       headers: {
         "Content-Type": "application/json"
       },
+      credentials: "include",
     });
 
     if (!res.ok) {
@@ -61,9 +62,6 @@ async function handleDelete(homeId) {
               <span className="absolute top-2 left-2 bg-white text-xs font-semibold px-2 py-1 rounded-full shadow">
                 Guest favourite
               </span>
-              <button className="absolute top-2 right-2 bg-white p-2 rounded-full shadow hover:bg-gray-100">
-                <CiHeart size={18} className="text-gray-700" />
-              </button>
             </div>
 
             <div className="p-4">
