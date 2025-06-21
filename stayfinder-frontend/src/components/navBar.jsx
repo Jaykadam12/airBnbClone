@@ -41,9 +41,13 @@ function NavBar() {
 
   async function handleLogout() {
     try {
-      const res = await fetch("https://airbnbclone-y56h.onrender.com/api/auth/logout", {
+          const res = await fetch(
+      "https://airbnbclone-y56h.onrender.com/api/auth/logout",
+      {
         method: "POST",
-      });
+        credentials: "include",
+      }
+    );
 
       if (!res.ok) {
         const errorData = await res.json();
