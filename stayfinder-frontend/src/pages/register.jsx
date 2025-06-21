@@ -10,7 +10,7 @@ function RegisterPage() {
     const formdata = new FormData(e.target);
     const data = Object.fromEntries(formdata.entries());
       try {
-        const res = await fetch("/api/auth/register", {
+        const res = await fetch("https://airbnbclone-y56h.onrender.com/api/auth/register", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
