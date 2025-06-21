@@ -43,8 +43,9 @@ function ListHome() {
       const method = editing ? "PUT" : "POST";
       const url = editing ? `https://airbnbclone-y56h.onrender.com/api/listings/${homeId}` : "https://airbnbclone-y56h.onrender.com/api/listings";
 
-      const response = await fetch(url, {
+     const response = await fetch(url, {
         method,
+        credentials: "include",
         body: formData,
       });
       if (!response.ok) {
