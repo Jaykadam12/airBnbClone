@@ -5,7 +5,7 @@ const storage = new CloudinaryStorage({
   cloudinary,
   params: {
     folder: "stayfinder", // this is the folder name in your Cloudinary
-    allowed_formats: ["jpg", "png", "jpeg", "webp"],
+    allowed_formats: ["jpg", "png", "jpeg", "webp", "avif"],
   },
 });
 
