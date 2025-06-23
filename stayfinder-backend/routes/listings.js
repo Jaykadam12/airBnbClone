@@ -6,7 +6,7 @@ const router = express.Router();
 const upload = multer({ storage: cloudinaryStorage });
 const verifyToken = require("../middleware/verifyToken");
 
-//  GET all listings
+// GET all listings
 router.get("/", async (req, res) => {
   try {
     const listings = await Listing.find().populate("hostId", "name email");
@@ -37,7 +37,7 @@ router.get("/host/:hostId", async (req, res) => {
   }
 });
 
-//  GET single listing by ID
+// GET single listing by ID
 router.get("/:id", async (req, res) => {
   try {
     const listing = await Listing.findById(req.params.id).populate(
@@ -56,7 +56,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-//  POST new listing (upload to Cloudinary)
+// POST new listing (upload to Cloudinary)
 router.post("/", verifyToken, upload.array("images"), async (req, res) => {
   try {
     const { title, description, price, location, features } = req.body;
@@ -80,7 +80,7 @@ router.post("/", verifyToken, upload.array("images"), async (req, res) => {
   }
 });
 
-//  PUT (Update) listing
+// PUT (Update) listing
 router.put("/:id", verifyToken, upload.array("images"), async (req, res) => {
   try {
     const { id } = req.params;
@@ -110,7 +110,7 @@ router.put("/:id", verifyToken, upload.array("images"), async (req, res) => {
   }
 });
 
-//  DELETE listing
+// DELETE listing
 router.delete("/:id", verifyToken, async (req, res) => {
   try {
     const listing = await Listing.findById(req.params.id);
