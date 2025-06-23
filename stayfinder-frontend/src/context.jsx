@@ -6,13 +6,17 @@ export const AuthProvider = ({ children }) => {
   const [listings, setListings] = useState(undefined);
   const [user, setUser] = useState(undefined);
   const [loading, setLoading] = useState(true);
+  const [listLoading, setListLoadings] = useState(true);
 
   async function fetchUser() {
     try {
-     const res = await fetch("https://airbnbclone-y56h.onrender.com/api/auth/me", {
-       method: "GET",
-       credentials: "include",
-     });
+     const res = await fetch(
+       "https://airbnbclone-y56h.onrender.com/api/auth/me",
+       {
+         method: "GET",
+         credentials: "include",
+       }
+     );
 
       if (!res.ok) {
         // Other errors
@@ -35,30 +39,53 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
-    async function fetchListings() {
-      let api = "https://airbnbclone-y56h.onrender.com/api/listings";
-
-      if (location.pathname === "/host"){
-        api = `https://airbnbclone-y56h.onrender.com/api/listings/host/${user._id}`;
-      }
-
-      try {
-        const res = await fetch(api);
-
-        if (!res.ok) {
-          const errordata = await res.json();
-          throw new Error(errordata.error);
-        }
-        const data = await res.json();
-        setListings(data);
-      } catch (err) {
-        console.error("Failed to load listings", err);
-        setListings(undefined)
-      }
+async function fetchAllListings() {
+  try {
+    const res = await fetch(
+      "https://airbnbclone-y56h.onrender.com/api/listings"
+    );
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error);
     }
-      useEffect(() => {
-        fetchListings();
-      }, [user, location.pathname]);
+    const data = await res.json();
+    setListings(data);
+  } catch (error) {
+    console.error("Failed to fetch all listings:", error.message);
+    setListings(undefined);
+  } finally {
+    setListLoadings(false);
+  }
+}
+
+async function fetchHostListings() {
+  if (!user?._id) return; // wait for user to be ready
+  try {
+    const res = await fetch(
+      `https://airbnbclone-y56h.onrender.com/api/listings/host/${user._id}`
+    );
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error);
+    }
+    const data = await res.json();
+    setListings(data);
+  } catch (error) {
+    console.error("Failed to fetch host listings:", error.message);
+    setListings(undefined);
+  } finally {
+    setListLoadings(false);
+  }
+}
+  useEffect(() => {
+    setListings(undefined); // clear old data immediately
+    setListLoadings(true); // show loading spinner
+    if (location.pathname === "/host") {
+      fetchHostListings();
+    } else {
+      fetchAllListings();
+    }
+  }, [user?._id, location.pathname]);
 
   useEffect(() => {
     fetchUser();
@@ -71,9 +98,9 @@ export const AuthProvider = ({ children }) => {
         setUser,
         loading,
         fetchUser,
-        fetchListings,
         listings,
         setListings,
+        listLoading,
       }}
     >
       {children}
