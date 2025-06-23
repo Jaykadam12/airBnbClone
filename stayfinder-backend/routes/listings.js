@@ -61,7 +61,7 @@ router.post("/", verifyToken, upload.array("images"), async (req, res) => {
   try {
     const { title, description, price, location, features } = req.body;
     const featuresArray = features ? features.trim().split(/\s+/) : [];
-    const images = req.files.map((file) => file.path); 
+     const images = req.files?.map((file) => file.path) || [];
 
     const newListing = await Listing.create({
       title,
