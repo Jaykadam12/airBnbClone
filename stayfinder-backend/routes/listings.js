@@ -1,43 +1,44 @@
 const express = require("express");
 const Listing = require("../models/Listing");
+const multer = require("multer");
+const cloudinaryStorage = require("../cloudinaryStorage");
 const router = express.Router();
 const upload = multer({ storage: cloudinaryStorage });
-const path = require("path");
-const multer = require("multer");
 const verifyToken = require("../middleware/verifyToken");
-const mongoose = require("mongoose");
-const cloudinaryStorage = require("../cloudinaryStorage");
-const storage = require("../cloudinaryStorage");
 
-//TO GET all home
+//  GET all listings
 router.get("/", async (req, res) => {
-  const Listings = await Listing.find().populate("hostId", "name email");
-  res.json(Listings);
+  try {
+    const listings = await Listing.find().populate("hostId", "name email");
+    res.json(listings);
+  } catch (error) {
+    console.error("Error fetching listings:", error);
+    res.status(500).json({ error: "Server error" });
+  }
 });
 
-// GET /api/listings/host/:hostId TO get homes of host
-router.get('/host/:hostId', async (req, res) => {
-  const hostId = req.params.hostId;
-
+// GET listings of a specific host
+router.get("/host/:hostId", async (req, res) => {
   try {
-    const listings = await Listing.find({ hostId: hostId }).populate('hostId', 'name email');
+    const hostId = req.params.hostId;
+    const listings = await Listing.find({ hostId }).populate(
+      "hostId",
+      "name email"
+    );
 
     if (!listings || listings.length === 0) {
-      return res.status(404).json({ error: 'No listings found for this host' });
+      return res.status(404).json({ error: "No listings found for this host" });
     }
 
     res.json(listings);
   } catch (error) {
-    console.error('Error fetching host listings:', error);
-    res.status(500).json({ error: 'Server error' });
+    console.error("Error fetching host listings:", error);
+    res.status(500).json({ error: "Server error" });
   }
 });
 
-
-//TO GET single home by id
-router.get("/:id", async (req, res) => {  
-  const { id } = req.params;
-
+//  GET single listing by ID
+router.get("/:id", async (req, res) => {
   try {
     const listing = await Listing.findById(req.params.id).populate(
       "hostId",
@@ -51,23 +52,16 @@ router.get("/:id", async (req, res) => {
     res.json(listing);
   } catch (error) {
     console.error("Error fetching listing:", error);
-    if (error.kind === "ObjectId") {
-      // Invalid ObjectId format
-      return res.status(400).json({ error: "Invalid listing ID" });
-    }
     res.status(500).json({ error: "Server error" });
   }
 });
 
-
-//TO POST Home and save in database
+//  POST new listing (upload to Cloudinary)
 router.post("/", verifyToken, upload.array("images"), async (req, res) => {
   try {
     const { title, description, price, location, features } = req.body;
     const featuresArray = features ? features.trim().split(/\s+/) : [];
-    
-    // Use Cloudinary image URLs
-    const images = req.files.map((file) => file.path);
+    const images = req.files.map((file) => file.path); 
 
     const newListing = await Listing.create({
       title,
@@ -81,81 +75,57 @@ router.post("/", verifyToken, upload.array("images"), async (req, res) => {
 
     res.status(201).json(newListing);
   } catch (error) {
-    console.error("Error creating listing:", error);
+    console.error("Error creating listing:", error.message, error.stack);
     res.status(400).json({ error: "Invalid data or server error" });
   }
 });
 
-
-//TO EDIT home data
+//  PUT (Update) listing
 router.put("/:id", verifyToken, upload.array("images"), async (req, res) => {
   try {
     const { id } = req.params;
     const { title, description, price, location, features } = req.body;
-
     const featuresArray = features ? features.trim().split(/\s+/) : [];
+    const images = req.files?.map((file) => file.path) || []; 
 
-    const images = req.files?.map((file) => `/uploads/${file.filename}`) || [];
+    const listing = await Listing.findById(id);
+    if (!listing) return res.status(404).json({ error: "Listing not found" });
 
-    // Fetch the existing listing
-    const existingListing = await Listing.findById(id);
-    if (!existingListing) {
-      return res.status(404).json({ error: "Listing not found" });
+    if (listing.hostId.toString() !== req.user.id) {
+      return res.status(403).json({ error: "Unauthorized to update listing" });
     }
 
-    // Optional: check if current user owns this listing
-    if (existingListing.hostId.toString() !== req.user.id) {
-      return res.status(403).json({ error: "Unauthorized" });
-    }
+    listing.title = title;
+    listing.description = description;
+    listing.price = price;
+    listing.location = location;
+    listing.features = featuresArray;
+    if (images.length > 0) listing.images = images;
 
-    // Update fields
-    existingListing.title = title;
-    existingListing.description = description;
-    existingListing.price = price;
-    existingListing.location = location;
-    existingListing.features = featuresArray;
-
-    // Only replace images if new ones are uploaded
-    if (images.length > 0) {
-      existingListing.images = images;
-    }
-
-    const updatedListing = await existingListing.save();
-    res.json(updatedListing);
+    const updated = await listing.save();
+    res.json(updated);
   } catch (error) {
-    console.error("Error updating listing:", error);
+    console.error("Error updating listing:", error.message, error.stack);
     res.status(500).json({ error: "Server error while updating listing" });
   }
 });
 
-
-
-//TO delete home
+//  DELETE listing
 router.delete("/:id", verifyToken, async (req, res) => {
   try {
-    const listingId = req.params.id;
-
-    // Find the listing first
-    const listing = await Listing.findById(listingId);
-    if (!listing) {
-      return res.status(404).json({ error: "Listing not found" });
-    }
+    const listing = await Listing.findById(req.params.id);
+    if (!listing) return res.status(404).json({ error: "Listing not found" });
 
     if (listing.hostId.toString() !== req.user.id) {
-      return res
-        .status(403)
-        .json({ error: "Unauthorized to delete this listing" });
+      return res.status(403).json({ error: "Unauthorized to delete listing" });
     }
 
-    // Delete the listing
-    await Listing.findByIdAndDelete(listingId);
-
-    res.status(200).json({ message: "Listing deleted successfully" });
+    await Listing.findByIdAndDelete(req.params.id);
+    res.json({ message: "Listing deleted successfully" });
   } catch (error) {
-    console.error("Error deleting listing:", error);
+    console.error("Error deleting listing:", error.message, error.stack);
     res.status(500).json({ error: "Server error while deleting listing" });
   }
 });
-
 
 module.exports = router;
