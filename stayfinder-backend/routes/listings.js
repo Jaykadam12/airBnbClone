@@ -1,10 +1,13 @@
 const express = require("express");
 const Listing = require("../models/Listing");
 const router = express.Router();
-const multer = require("multer");
+const upload = multer({ storage: cloudinaryStorage });
 const path = require("path");
+const multer = require("multer");
 const verifyToken = require("../middleware/verifyToken");
 const mongoose = require("mongoose");
+const cloudinaryStorage = require("../cloudinaryStorage");
+const storage = require("../cloudinaryStorage");
 
 //TO GET all home
 router.get("/", async (req, res) => {
@@ -56,28 +59,16 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// Multer config: save files to uploads folder with unique names
-const crypto = require("crypto");
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, "uploads/"),
-  filename: (req, file, cb) => {
-    const uniqueSuffix =
-      Date.now() + "-" + crypto.randomBytes(4).toString("hex");
-    cb(null, uniqueSuffix + path.extname(file.originalname));
-  },
-});
-
-const upload = multer({ storage });
-
 
 //TO POST Home and save in database
 router.post("/", verifyToken, upload.array("images"), async (req, res) => {
   try {
     const { title, description, price, location, features } = req.body;
     const featuresArray = features ? features.trim().split(/\s+/) : [];
-    const images = req.files.map((file) => `/uploads/${file.filename}`);
-    console.log(req.user.id);
+    
+    // Use Cloudinary image URLs
+    const images = req.files.map((file) => file.path);
+
     const newListing = await Listing.create({
       title,
       description,
@@ -85,7 +76,7 @@ router.post("/", verifyToken, upload.array("images"), async (req, res) => {
       location,
       features: featuresArray,
       images,
-      hostId: req.user.id, // comes from your verifyToken middleware
+      hostId: req.user.id,
     });
 
     res.status(201).json(newListing);
