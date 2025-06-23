@@ -9,7 +9,14 @@ import Loading from '../components/Loading'
 
 function Homes() {
   const location = useLocation();
-  const { user, fetchUser, setListings, listings, fetchListings } = useAuth();
+  const {
+    user,
+    fetchUser,
+    setListings,
+    listings,
+    listLoading,
+    fetchHostListings,
+  } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -19,13 +26,16 @@ function Homes() {
 
 async function handleDelete(homeId) {
   try {
-    const res = await fetch(`https://airbnbclone-y56h.onrender.com/api/listings/${homeId}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      credentials: "include",
-    });
+    const res = await fetch(
+      `https://airbnbclone-y56h.onrender.com/api/listings/${homeId}`,
+      {
+        method: "DELETE",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     if (!res.ok) {
       const errData = await res.json();
@@ -33,13 +43,16 @@ async function handleDelete(homeId) {
     }
 
     toast.success("Your home was deleted");
-    fetchListings();
+    fetchHostListings();
   } catch (error) {
     console.error("Error deleting home:", error.message);
     toast.error("Failed to delete home");
   }
 }
 
+  if(listLoading){
+    return <Loading></Loading>
+  }
 
   if(listings === undefined){
     return <p>Listings Not Found</p>
@@ -62,6 +75,9 @@ async function handleDelete(homeId) {
               <span className="absolute top-2 left-2 bg-white text-xs font-semibold px-2 py-1 rounded-full shadow">
                 Guest favourite
               </span>
+              <button className="absolute top-2 right-2 bg-white p-2 rounded-full shadow hover:bg-gray-100">
+                <CiHeart size={18} className="text-gray-700" />
+              </button>
             </div>
 
             <div className="p-4">
