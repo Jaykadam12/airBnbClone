@@ -53,6 +53,7 @@ export const AuthProvider = ({ children }) => {
         setListings(data);
       } catch (err) {
         console.error("Failed to load listings", err);
+        setListings(undefined)
       }
     }
       useEffect(() => {
