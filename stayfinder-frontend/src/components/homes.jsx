@@ -55,7 +55,7 @@ async function handleDelete(homeId) {
           >
             <div className="relative h-64">
               <img
-                src={`https://airbnbclone-y56h.onrender.com${home.images[0]}`}
+                src={`${home.images[0]}`}
                 alt="listing"
                 className="w-full h-full object-cover"
               />
