@@ -14,6 +14,7 @@ import ListHome from './pages/listHome'
 import ProtectedRoute from './ProtectedRoute'
 import BottomNav from './components/bottomNav'
 import HostBookings from './pages/hostBookings'
+import NotFound from './pages/not-found'
 
 
 function App() {
