@@ -243,16 +243,6 @@ function NavBar() {
                     <CgProfile className="text-xl tect-gray-500" /> Profile
                   </Link>
                 )}
-                {user && (
-                  <Link
-                    to={"/wishlist"}
-                    onClick={() => setMenuOpen(false)}
-                    className="border-b flex cursor-pointer  items-center gap-1 py-2 w-full"
-                  >
-                    <CiHeart className="text-xl tect-gray-500"></CiHeart>{" "}
-                    Wishlist
-                  </Link>
-                )}
                 <div
                   onClick={handleHost}
                   className="border-b cursor-pointer py-2"
