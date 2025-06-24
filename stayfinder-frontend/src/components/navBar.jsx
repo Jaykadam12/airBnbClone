@@ -3,7 +3,7 @@ import { IoHome } from "react-icons/io5";
 import { FaHome } from "react-icons/fa";
 import { CiGlobe } from "react-icons/ci";
 import { IoIosMenu } from "react-icons/io";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../context";
 import { toast } from "react-toastify";
 import { CiHeart } from "react-icons/ci";
@@ -16,7 +16,14 @@ function NavBar() {
   const location = useLocation();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
-  const { user, setUser, listings, setListings, fetchListings } = useAuth();
+  const { user, setUser, listings, setListings } = useAuth();
+  const [dummyListings, setDummyListings] = useState([]);
+
+ useEffect(() => {
+   if (listings && dummyListings.length === 0) {
+     setDummyListings(listings);
+   }
+ }, [listings]);
 
   const debouncedSearch = debounce(handleSearch, 300);
 
@@ -41,13 +48,13 @@ function NavBar() {
 
   async function handleLogout() {
     try {
-          const res = await fetch(
-      "https://airbnbclone-y56h.onrender.com/api/auth/logout",
-      {
-        method: "POST",
-        credentials: "include",
-      }
-    );
+      const res = await fetch(
+        "https://airbnbclone-y56h.onrender.com/api/auth/logout",
+        {
+          method: "POST",
+          credentials: "include",
+        }
+      );
 
       if (!res.ok) {
         const errorData = await res.json();
@@ -66,11 +73,10 @@ function NavBar() {
 
   function handleSearch(e) {
     const value = e.target.value.trim().toLowerCase();
-
     if (value === "") {
-      fetchListings();
+      setListings(dummyListings);
     } else {
-      const updatedListings = listings.filter((l) =>
+      const updatedListings = dummyListings.filter((l) =>
         l.location?.toLowerCase().includes(value.toLowerCase())
       );
       setListings(updatedListings);
@@ -89,12 +95,16 @@ function NavBar() {
         <div>
           <div className="px-6 md:hidden bg-[#FFFFFF] py-3 w-full flex flex-col">
             <div>
-             {!location.pathname === '/profile' ?  <input
-                onChange={debouncedSearch}
-                type="text"
-                className="w-full bg-white text-center py-4 rounded-full outline-none shadow-md font-medium placeholder:text-black"
-                placeholder="Start Your search"
-              /> : '' }
+              {!location.pathname === "/profile" ? (
+                <input
+                  onChange={debouncedSearch}
+                  type="text"
+                  className="w-full bg-white text-center py-4 rounded-full outline-none shadow-md font-medium placeholder:text-black"
+                  placeholder="Start Your search"
+                />
+              ) : (
+                ""
+              )}
             </div>
             {!showHostNav ? (
               <Link
@@ -165,7 +175,7 @@ function NavBar() {
             <input
               type="text"
               onChange={debouncedSearch}
-              placeholder="Search...."
+              placeholder="Enter Location...."
               className="border-2 ml-10 outline-none w-[40%] px-5 border-[#FF385C] py-1 rounded-full"
             />
           </Link>
