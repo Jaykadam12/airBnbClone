@@ -32,13 +32,6 @@ function BottomNav() {
         <CiSearch className="text-2xl"></CiSearch>
         <button className="text-gray-700">Explore</button>
       </Link>
-      <Link
-        to={"/wishlist"}
-        className="flex flex-col items-center justify-around p-3"
-      >
-        <CiHeart className="text-2xl"></CiHeart>
-        <button className="text-gray-700">Wishlist</button>
-      </Link>
       {!user ? (
         <Link
           to={"/register"}
