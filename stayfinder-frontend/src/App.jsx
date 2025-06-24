@@ -29,6 +29,7 @@ function App() {
         <Route path="/singleHome/:id" element={<SingleHome />} />
         <Route path="/login" element={<Login />} />
         <Route path="/profile/*" element={<ProfilePage />} />
+         <Route path="/*" element={<NotFound />} />
 
         <Route
           path="/host"
